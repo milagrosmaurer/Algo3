@@ -1,0 +1,50 @@
+#include <iostream>
+#include <vector>
+#include <utility> // Para std::pair
+
+using namespace std;
+
+vector<int> c;
+int k;
+
+// Modificar la función para devolver un par (pair) de un vector de enteros y un booleano
+pair<vector<int>, bool> subset_sum(vector<int>& c, int i, int j, vector<int>& p){
+    if (j<0) return {p, false};
+    if (i==0) return {p, j==0};
+    if(subset_sum(c,i-1,j,p).second){ //caso sin agregar elemento
+        return {p, true};
+    }
+    p.push_back(c[i-1]);
+    if(subset_sum(c,i-1,j-c[i-1],p).second){
+        return {p, true};
+    }
+    p.pop_back();
+    return {p, false};
+}
+
+int main() {
+    // <- Generar C
+    c.push_back(6);
+    c.push_back(12);
+    c.push_back(6);
+    // <- Generar k
+    k = 12;
+    vector<int> p;
+
+    int total_sum = 0;
+    for(int i = 0; i < c.size(); i++) total_sum += c[i];
+
+    // Llamar a la función y obtener el resultado
+    pair<vector<int>, bool> result = subset_sum(c, c.size(), k, p);
+    string answer = result.second ? "True" : "False";
+
+    // Imprimir el booleano y el vector p
+    cout << "Resultado: " << answer << endl;
+    cout << "Vector p: ";
+    for (int elem : result.first) {
+        cout << elem << " ";
+    }
+    cout << endl;
+
+    return 0;
+}
