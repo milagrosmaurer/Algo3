@@ -1,0 +1,57 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <tuple>
+
+using namespace std;
+// devuelvo un par de vectores donde uno sea el de atacantes y otro el de defensores.
+pair<vector<string>,vector<string>> formacion(vector<tuple<string,int,int>> jugadores,int pAtacante, int pDefensor){
+    vector<string> atacantes;
+    vector<string> defensores;
+    int mejorAt = 0;
+    int mejorDef = 0;
+    for(int i = 0;i<jugadores.size();i++){
+        if(atacantes.size()<=2 && (pAtacante + get<1>(jugadores[i])> mejorAt) ){
+            mejorAt = pAtacante + get<1>(jugadores[i]);
+            pAtacante = pAtacante + get<1>(jugadores[i]);
+            atacantes.push_back(get<0>(jugadores[i]));
+            formacion(jugadores,pAtacante,pDefensor);
+        }else{
+            mejorDef = pDefensor + get<2>(jugadores[i]);
+            pDefensor = pDefensor + get<2>(jugadores[i]);
+            defensores.push_back(get<0>(jugadores[i]));
+            formacion(jugadores,pAtacante,pDefensor);
+        }
+    }
+    return {atacantes,defensores};
+}
+
+
+
+
+int main() {
+    vector<tuple<string,int,int>> jugs;
+    tuple<string,int,int> jug1 = {"sameezahur",20,21};
+    tuple<string,int,int> jug2 = {"sohelh",18,9};
+    tuple<string,int,int> jug3 = {"jaan",17,86};
+    tuple<string,int,int> jug4 = {"sidky",16,36};
+
+    jugs.push_back(jug1);
+    jugs.push_back(jug2);
+    jugs.push_back(jug3);
+    jugs.push_back(jug4);
+
+    pair<vector<string>,vector<string>> answer = formacion(jugs,0,0);
+    cout << "Atacantes: ";
+    for (const auto& nombre : answer.first) {
+        cout << nombre << " ";
+    }
+    cout << "\nDefensores: ";
+    for (const auto& nombre : answer.second) {
+        cout << nombre << " ";
+    }
+    cout << endl;
+
+    return 0;
+
+}
