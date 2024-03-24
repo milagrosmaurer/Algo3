@@ -55,3 +55,17 @@ int main() {
     return 0;
 
 }
+
+
+pair<vector<tuple<string,int,int>>,vector<string>> formaciones(vector<tuple<string,int,int>> jugadores, int mejorAtaque,int i,vector<tuple<string,int,int>> atacantes, vector<string> defensores){
+    if(i == jugadores.size()) return make_pair(atacantes,defensores);
+    if(mejorAtaque < sumaAtacantes(atacantes.push_back(jugadores[i])) && atacantes.size()<=5){
+        atacantes.push_back(jugadores[i]);
+        mejorAtaque = sumaAtacantes(atacantes);
+        return formaciones(jugadores,mejorAtaque,i+1,atacantes,defensores);
+    }else{
+        defensores.push_back(get<0>(jugadores[i]));
+        return formaciones(jugadores,mejorAtaque,i+1,atacantes,defensores);
+    }
+
+}
