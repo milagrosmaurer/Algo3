@@ -69,3 +69,77 @@ pair<vector<tuple<string,int,int>>,vector<string>> formaciones(vector<tuple<stri
     }
 
 }
+
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <tuple>
+#include <algorithm>
+
+using namespace std;
+
+//Funcion que devuelve la suma de los atacantes
+int sumaAtacantes(const vector<tuple<string, int, int>>& atacantes) {
+    int suma = 0;
+    for (const auto& jugador : atacantes) {
+        suma += get<1>(jugador); // Suma la habilidad de ataque
+    }
+    return suma;
+}
+
+void formacion(const vector<tuple<string, int, int>>& jugadores, int i, vector<tuple<string, int, int>>& atacantes, vector<tuple<string, int, int>>& defensores, vector<tuple<string, int, int>>& mejorAtacantes, vector<tuple<string, int, int>>& mejorDefensores, int& mejorAtaque) {
+    if (i == jugadores.size()) {
+        int ataqueActual = sumaAtacantes(atacantes);
+        if (ataqueActual > mejorAtaque) {
+            mejorAtaque = ataqueActual;
+            mejorAtacantes = atacantes;
+            mejorDefensores = defensores;
+        }
+        return;
+    }
+
+    // Caso en el que el jugador actual es considerado como atacante
+    if (atacantes.size() < 5) { // Asegura que solo haya un máximo de 5 atacantes
+        atacantes.push_back(jugadores[i]);
+        formacion(jugadores, i + 1, atacantes, defensores, mejorAtacantes, mejorDefensores, mejorAtaque);
+        atacantes.pop_back(); // Backtrack
+    }
+
+    // Caso en el que el jugador actual es considerado como defensor
+    defensores.push_back(jugadores[i]);
+    formacion(jugadores, i + 1, atacantes, defensores, mejorAtacantes, mejorDefensores, mejorAtaque);
+    defensores.pop_back(); // Backtrack
+}
+
+int main() {
+    vector<tuple<string, int, int>> jugadores;
+    // Añadir jugadores
+    jugadores.push_back({"sameezahur", 20, 21});
+    jugadores.push_back({"sohelh", 18, 9});
+    jugadores.push_back({"jaan", 17, 86});
+    jugadores.push_back({"sidky", 16, 36});
+    jugadores.push_back({"shamin", 16, 18});
+    jugadores.push_back({"shadowcoder", 12, 9});
+    jugadores.push_back({"muntasir", 13, 4});
+    jugadores.push_back({"brokenarrow", 16, 16});
+    jugadores.push_back({"emotionalblind", 16, 12});
+    jugadores.push_back({"tanaeem", 20, 97});
+
+    vector<tuple<string, int, int>> atacantes, defensores, mejorAtacantes, mejorDefensores;
+    int mejorAtaque = 0;
+
+    formacion(jugadores, 0, atacantes, defensores, mejorAtacantes, mejorDefensores, mejorAtaque);
+
+    cout << "Mejor ataque posible: " << mejorAtaque << endl;
+    cout << "Atacantes:" << endl;
+    for (const auto& atacante : mejorAtacantes) {
+        cout << get<0>(atacante) << " - Ataque: " << get<1>(atacante) << endl;
+    }
+    cout << "Defensores:" << endl;
+    for (const auto& defensor : mejorDefensores) {
+        cout << get<0>(defensor) << endl;
+    }
+
+    return 0;
+}
