@@ -1,120 +1,48 @@
-#include <iostream>
+//este algoritmo esta muy bien!!!!
+
 #include <vector>
-#include <string>
 #include <tuple>
-
-using namespace std;
-// devuelvo un par de vectores donde uno sea el de atacantes y otro el de defensores.
-pair<vector<string>,vector<string>> formacion(vector<tuple<string,int,int>> jugadores,int pAtacante, int pDefensor){
-    vector<string> atacantes;
-    vector<string> defensores;
-    int mejorAt = 0;
-    int mejorDef = 0;
-    for(int i = 0;i<jugadores.size();i++){
-        if(atacantes.size()<=2 && (pAtacante + get<1>(jugadores[i])> mejorAt) ){
-            mejorAt = pAtacante + get<1>(jugadores[i]);
-            pAtacante = pAtacante + get<1>(jugadores[i]);
-            atacantes.push_back(get<0>(jugadores[i]));
-            formacion(jugadores,pAtacante,pDefensor);
-        }else{
-            mejorDef = pDefensor + get<2>(jugadores[i]);
-            pDefensor = pDefensor + get<2>(jugadores[i]);
-            defensores.push_back(get<0>(jugadores[i]));
-            formacion(jugadores,pAtacante,pDefensor);
-        }
-    }
-    return {atacantes,defensores};
-}
-
-
-
-
-int main() {
-    vector<tuple<string,int,int>> jugs;
-    tuple<string,int,int> jug1 = {"sameezahur",20,21};
-    tuple<string,int,int> jug2 = {"sohelh",18,9};
-    tuple<string,int,int> jug3 = {"jaan",17,86};
-    tuple<string,int,int> jug4 = {"sidky",16,36};
-
-    jugs.push_back(jug1);
-    jugs.push_back(jug2);
-    jugs.push_back(jug3);
-    jugs.push_back(jug4);
-
-    pair<vector<string>,vector<string>> answer = formacion(jugs,0,0);
-    cout << "Atacantes: ";
-    for (const auto& nombre : answer.first) {
-        cout << nombre << " ";
-    }
-    cout << "\nDefensores: ";
-    for (const auto& nombre : answer.second) {
-        cout << nombre << " ";
-    }
-    cout << endl;
-
-    return 0;
-
-}
-
-
-pair<vector<tuple<string,int,int>>,vector<string>> formaciones(vector<tuple<string,int,int>> jugadores, int mejorAtaque,int i,vector<tuple<string,int,int>> atacantes, vector<string> defensores){
-    if(i == jugadores.size()) return make_pair(atacantes,defensores);
-    if(mejorAtaque < sumaAtacantes(atacantes.push_back(jugadores[i])) && atacantes.size()<=5){
-        atacantes.push_back(jugadores[i]);
-        mejorAtaque = sumaAtacantes(atacantes);
-        return formaciones(jugadores,mejorAtaque,i+1,atacantes,defensores);
-    }else{
-        defensores.push_back(get<0>(jugadores[i]));
-        return formaciones(jugadores,mejorAtaque,i+1,atacantes,defensores);
-    }
-
-}
-
-
+#include <string>
 #include <iostream>
-#include <vector>
-#include <string>
-#include <tuple>
-#include <algorithm>
+
 
 using namespace std;
 
-//Funcion que devuelve la suma de los atacantes
-int sumaAtacantes(const vector<tuple<string, int, int>>& atacantes) {
+
+int sumaAtacantes(const vector<tuple<string, int, int>> atacantes){
     int suma = 0;
-    for (const auto& jugador : atacantes) {
-        suma += get<1>(jugador); // Suma la habilidad de ataque
+    for(int i =0;i<atacantes.size();i++){
+        suma+=get<1>(atacantes[i]);
     }
     return suma;
 }
-
-void formacion(const vector<tuple<string, int, int>>& jugadores, int i, vector<tuple<string, int, int>>& atacantes, vector<tuple<string, int, int>>& defensores, vector<tuple<string, int, int>>& mejorAtacantes, vector<tuple<string, int, int>>& mejorDefensores, int& mejorAtaque) {
-    if (i == jugadores.size()) {
-        int ataqueActual = sumaAtacantes(atacantes);
-        if (ataqueActual > mejorAtaque) {
-            mejorAtaque = ataqueActual;
-            mejorAtacantes = atacantes;
-            mejorDefensores = defensores;
+int sumaDefensores(const vector<tuple<string, int, int>> defensores){
+    int suma = 0;
+    for(int i=0;i<defensores.size();i++){
+        suma += get<2>(defensores[i]);
+    }
+    return suma;
+}
+// int i es el indice que me recorre mi vector con los jugadores disponibles, se inicializa con 0
+tuple<vector<tuple<string,int,int>>,vector<tuple<string,int,int>>> formacion(const vector<tuple<string,int,int>>& jugadores, vector<tuple<string,int,int>>& mejorAtaque, vector<tuple<string,int,int>>& defensa, int i, vector<tuple<string,int,int>>& ataque){
+    if(i==jugadores.size()) return make_pair(ataque,defensa); //caso base
+    //aca tendria que agregar el caso donde hay empate en mejorAtaque y ataque con el ultimo jugador,ahi desempata el puntaje en defensa
+    if(ataque.size()<5){
+        ataque.push_back(jugadores[i]);
+        if(sumaAtacantes(ataque)> sumaAtacantes(mejorAtaque)){
+            mejorAtaque = ataque;
+            return formacion(jugadores,mejorAtaque,defensa,i+1,ataque);
         }
-        return;
-    }
 
-    // Caso en el que el jugador actual es considerado como atacante
-    if (atacantes.size() < 5) { // Asegura que solo haya un máximo de 5 atacantes
-        atacantes.push_back(jugadores[i]);
-        formacion(jugadores, i + 1, atacantes, defensores, mejorAtacantes, mejorDefensores, mejorAtaque);
-        atacantes.pop_back(); // Backtrack
+    }else{//caso en que lo pongo como defensa
+        defensa.push_back(jugadores[i]);
+        return formacion(jugadores,mejorAtaque,defensa,i+1,ataque);
     }
-
-    // Caso en el que el jugador actual es considerado como defensor
-    defensores.push_back(jugadores[i]);
-    formacion(jugadores, i + 1, atacantes, defensores, mejorAtacantes, mejorDefensores, mejorAtaque);
-    defensores.pop_back(); // Backtrack
 }
 
 int main() {
     vector<tuple<string, int, int>> jugadores;
-    // Añadir jugadores
+    //genero vector jugadores
     jugadores.push_back({"sameezahur", 20, 21});
     jugadores.push_back({"sohelh", 18, 9});
     jugadores.push_back({"jaan", 17, 86});
@@ -126,20 +54,18 @@ int main() {
     jugadores.push_back({"emotionalblind", 16, 12});
     jugadores.push_back({"tanaeem", 20, 97});
 
-    vector<tuple<string, int, int>> atacantes, defensores, mejorAtacantes, mejorDefensores;
-    int mejorAtaque = 0;
+    tuple<vector<tuple<string, int, int>>, vector<tuple<string, int, int>>> equipo;
+    vector<tuple<string, int, int>> defensa, ataque, mejorAtaque;
+    equipo = formacion(jugadores, mejorAtaque, defensa, 0, ataque);
 
-    formacion(jugadores, 0, atacantes, defensores, mejorAtacantes, mejorDefensores, mejorAtaque);
-
-    cout << "Mejor ataque posible: " << mejorAtaque << endl;
-    cout << "Atacantes:" << endl;
-    for (const auto& atacante : mejorAtacantes) {
-        cout << get<0>(atacante) << " - Ataque: " << get<1>(atacante) << endl;
+    cout << "Ataque:" << endl;
+    for(const auto& jugador : ataque) {
+        cout << get<0>(jugador) << " - Ataque: " << get<1>(jugador) << endl;
     }
-    cout << "Defensores:" << endl;
-    for (const auto& defensor : mejorDefensores) {
-        cout << get<0>(defensor) << endl;
+    cout << "Defensa:" <<endl;
+    for(const auto& jugador: defensa){
+        cout << get<0>(jugador) << " - Defensa: " << get<2>(jugador) << endl;
     }
-
     return 0;
+
 }
