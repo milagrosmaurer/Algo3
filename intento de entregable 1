@@ -1,0 +1,238 @@
+#include <vector>
+#include <tuple>
+#include <string>
+#include <iostream>
+#include <algorithm>
+
+
+using namespace std;
+
+//Quiero hacer funcion que me ordene por abecedario
+/*void ordenarABC (vector<tuple<string,int,int>> a) {
+    //int(char) de C++ devuelve el numero en el codigo ASCII
+
+}*/
+
+/*int sumaAtacantes(const vector<tuple<string, int, int>> atacantes){
+    int suma = 0;
+    for(int i =0;i<atacantes.size();i++){
+        suma+=get<1>(atacantes[i]);
+    }
+    return suma;
+}
+int sumaDefensores(const vector<tuple<string, int, int>> defensores){
+    int suma = 0;
+    for(int i=0;i<defensores.size();i++){
+        suma += get<2>(defensores[i]);
+    }
+    return suma;
+}
+// int i es el indice que me recorre mi vector con los jugadores disponibles, se inicializa con 0
+// creo que mejor que pasarme el mejorAtaque actual como un int me lo paso como un vector y con la funcion sumaAtacantes calculo el mejorAtaque
+// Esto puede ser costoso cuando hablamos de complejidad asi que ojo
+
+/*tuple<vector<tuple<string,int,int>>,vector<tuple<string,int,int>>> formacion(const vector<tuple<string,int,int>>& jugadores, vector<tuple<string,int,int>>& mejorAtaque, vector<tuple<string,int,int>>& defensa, int i, vector<tuple<string,int,int>>& ataque){
+    if(i==jugadores.size()) return make_pair(ataque,defensa); //caso base
+    //aca tendria que agregar el caso donde hay empate en mejorAtaque y ataque con el ultimo jugador,ahi desempata el puntaje en defensa
+    if(i==jugadores.size()-1 && ataque.size()<5){
+        ataque.push_back(jugadores[i]);
+        if(sumaAtacantes(ataque) == sumaAtacantes(mejorAtaque)){
+            if(sumaDefensores(ataque)> sumaDefensores(mejorAtaque)){
+                mejorAtaque = ataque;
+            }
+
+        }
+        return make_pair(mejorAtaque,defensa);
+    }
+    if(ataque.size()<5){
+        ataque.push_back(jugadores[i]);
+        if(sumaAtacantes(ataque)> sumaAtacantes(mejorAtaque)){
+            mejorAtaque = ataque;
+            return formacion(jugadores,mejorAtaque,defensa,i+1,ataque);
+        }
+
+    }else{//caso en que lo pongo como defensa
+        defensa.push_back(jugadores[i]);
+        return formacion(jugadores,mejorAtaque,defensa,i+1,ataque);
+    }
+}*/ //version mia
+
+#include <iostream>
+#include <vector>
+#include <tuple>
+
+using namespace std;
+
+int sumaAtacantes(const vector<tuple<string, int, int>>& atacantes) {
+    int suma = 0;
+    for (const auto& jugador : atacantes) {
+        suma += get<1>(jugador);
+    }
+    return suma;
+}
+
+int sumaDefensores(const vector<tuple<string, int, int>>& defensores) {
+    int suma = 0;
+    for (const auto& jugador : defensores) {
+        suma += get<2>(jugador);
+    }
+    return suma;
+}
+
+bool estaEnAtaque(tuple<string,int,int> jugador,vector<tuple<string,int,int>>& ataque){
+    for(int i = 0; i<ataque.size();i++){
+        if(get<0>(ataque[i]) == get<0>(jugador)){
+            return true;
+        }
+    }
+    return false;
+}
+
+vector<tuple<string,int,int>> atacantes(const vector<tuple<string,int,int>>& jugadores, vector<tuple<string,int,int>>& ataque,vector<tuple<string,int,int>>& mejorAtaque,int i){
+    if (i == jugadores.size()) {
+        return mejorAtaque;
+    }
+
+    if (ataque.size() < 5) {
+        ataque.push_back(jugadores[i]); // agrego el jugador al ataque
+        if (sumaAtacantes(mejorAtaque) < sumaAtacantes(ataque)) { //agregando a este atacante, el puntaje de atacantes es mejor
+            mejorAtaque = ataque;
+        }
+        else if (sumaAtacantes(mejorAtaque) == sumaAtacantes(ataque) && sumaDefensores(mejorAtaque) > sumaDefensores(ataque)) { //en caso de empate de habilidad atacante me quedo con el que le da menos habilidad defensiva a los atacantes
+            mejorAtaque = ataque;
+        }
+        auto resultadoAtaque = atacantes(jugadores, ataque, mejorAtaque,i + 1);
+        ataque.pop_back();
+        mejorAtaque = resultadoAtaque;
+    }
+
+    return atacantes(jugadores,ataque,mejorAtaque,i+1);
+}
+
+tuple<vector<tuple<string,int,int>>,vector<tuple<string,int,int>>> formacion(const vector<tuple<string,int,int>>& jugadores){
+    vector<tuple<string,int,int>> defensores, ataque,mejorAtaque;
+    vector<tuple<string,int,int>> mejoresAtacantes = atacantes(jugadores, ataque, mejorAtaque, 0);
+    for(int i = 0; i < jugadores.size(); i++){
+        if(!estaEnAtaque(jugadores[i], ataque)){
+            defensores.push_back(jugadores[i]);
+        }
+    }
+    return make_pair(ataque, defensores);
+}
+
+/*tuple<vector<tuple<string,int,int>>, vector<tuple<string,int,int>>> formacion(const vector<tuple<string,int,int>>& jugadores, vector<tuple<string,int,int>>& ataque, vector<tuple<string,int,int>>& defensa, vector<tuple<string,int,int>>& mejorAtaque,int i) {
+
+// Caso base
+    if (i == jugadores.size()) return make_tuple(mejorAtaque, defensa);
+
+    if (ataque.size() < 5) {
+     ataque.push_back(jugadores[i]);
+        if (sumaAtacantes(mejorAtaque) < sumaAtacantes(ataque)) { //caso en el que no hay empate
+         mejorAtaque = ataque;
+        }
+        else if (sumaAtacantes(mejorAtaque) == sumaAtacantes(ataque) && sumaDefensores(mejorAtaque) > sumaDefensores(ataque)) {
+         //caso donde hay empate,desempato con la menor habilidad en defensa para los atacantes
+         mejorAtaque = ataque;
+        }
+        auto resultadoAtaque = formacion(jugadores, ataque, defensa, mejorAtaque,i + 1);
+        ataque.pop_back();
+        mejorAtaque = get<0>(resultadoAtaque);
+        defensa = get<1>(resultadoAtaque);
+    }
+    if(defensa.size()<5){
+        defensa.push_back(jugadores[i]);
+
+    }
+    return formacion(jugadores,ataque,defensa,mejorAtaque,i+1);
+
+}*/
+
+
+int main() {
+    vector<tuple<string, int, int>> jugadores;
+    // Generar vector de jugadores
+    jugadores.push_back({"sameezahur", 20, 21});
+    jugadores.push_back({"sohelh", 18, 9});
+    jugadores.push_back({"jaan", 17, 86});
+    jugadores.push_back({"sidky", 16, 36});
+    jugadores.push_back({"shamin", 16, 18});
+    jugadores.push_back({"shadowcoder", 12, 9});
+    jugadores.push_back({"muntasir", 13, 4});
+    jugadores.push_back({"brokenarrow", 16, 16});
+    jugadores.push_back({"emotionalblind", 16, 12});
+    jugadores.push_back({"tanaeem", 20, 97});
+
+    std::sort(jugadores.begin(),jugadores.end());
+
+    /*vector<tuple<string, int, int>> defensa, ataque, mejorAtaque;
+    tuple<vector<tuple<string, int, int>>,vector<tuple<string, int, int>>> resultado = formacion(jugadores,ataque,defensa,mejorAtaque,0);
+
+    vector<tuple<string, int, int>> ataqueFinal = get<0>(resultado);
+    vector<tuple<string, int, int>> defensaFinal = get<1>(resultado);*/
+
+    tuple<vector<tuple<string, int, int>>,vector<tuple<string, int, int>>> resultado = formacion(jugadores);
+    vector<tuple<string, int, int>> ataqueFinal = get<0>(resultado);
+    vector<tuple<string ,int,int>> defensaFinal = get<1>(resultado);
+
+
+
+    cout << "(";
+    for (size_t i = 0; i < ataqueFinal.size(); ++i) {
+        cout <<  get<0>(ataqueFinal[i]) ;
+        if (i != ataqueFinal.size() - 1)
+            cout << ", ";
+    }
+    cout << ")" <<endl;
+
+    // Imprimir el equipo de defensa
+    cout << "(";
+    for (size_t i = 0; i < defensaFinal.size(); ++i) {
+        cout << get<0>(defensaFinal[i]);
+        if (i != defensaFinal.size() - 1)
+            cout << ", ";
+    }
+    cout << ")" << endl;
+
+    return 0;
+
+
+
+}
+
+
+
+// version mas certera tuple<vector<tuple<string,int,int>>, vector<tuple<string,int,int>>> formacion(const vector<tuple<string,int,int>>& jugadores, vector<tuple<string,int,int>>& ataque, vector<tuple<string,int,int>>& defensa, vector<tuple<string,int,int>>& mejorAtaque,int i) {
+// Caso base
+/* if (i == jugadores.size()) return make_tuple(mejorAtaque, defensa);
+
+ if (ataque.size() < 5) {
+     ataque.push_back(jugadores[i]);
+     if (sumaAtacantes(mejorAtaque) < sumaAtacantes(ataque)) { //caso en el que no hay empate
+         mejorAtaque = ataque;
+     }
+     else if (sumaAtacantes(mejorAtaque) == sumaAtacantes(ataque) && sumaDefensores(mejorAtaque) > sumaDefensores(ataque)) {
+         //caso donde hay empate,desempato con la menor habilidad en defensa para los atacantes
+         mejorAtaque = ataque;
+     }
+     auto resultadoAtaque = formacion(jugadores, ataque, defensa, mejorAtaque,i + 1);
+     ataque.pop_back();
+     mejorAtaque = get<0>(resultadoAtaque);
+     defensa = get<1>(resultadoAtaque);
+ }
+ if(defensa.size()<5){
+     defensa.push_back(jugadores[i]);
+
+ }
+ return formacion(jugadores,ataque,defensa,mejorAtaque,i+1);
+
+
+
+
+}
+*/
+
+
+
+
+
+
