@@ -104,48 +104,7 @@ int main(){
 }
 
 
-/*int main() {
-    vector<tuple<string, int, int>> jugadores;
-    // genero vector de jugadores
-    jugadores.push_back({"sameezahur", 20, 21});
-    jugadores.push_back({"sohelh", 18, 9});
-    jugadores.push_back({"jaan", 17, 86});
-    jugadores.push_back({"sidky", 16, 36});
-    jugadores.push_back({"shamin", 16, 18});
-    jugadores.push_back({"shadowcoder", 12, 9});
-    jugadores.push_back({"muntasir", 13, 4});
-    jugadores.push_back({"brokenarrow", 16, 16});
-    jugadores.push_back({"emotionalblind", 16, 12});
-    jugadores.push_back({"tanaeem", 20, 97});
 
-    std::sort(jugadores.begin(),jugadores.end()); //ordeno jugadores con funcion sort de C++
-
-
-    tuple<vector<tuple<string, int, int>>,vector<tuple<string, int, int>>> resultado = formacion(jugadores);
-    vector<tuple<string, int, int>> ataqueFinal = get<0>(resultado);
-    vector<tuple<string ,int,int>> defensaFinal = get<1>(resultado);
-
-// IMPORTANTE TENER EN CUENTA ESPACIOS!!!
-    cout << "(";
-    for (size_t i = 0; i < ataqueFinal.size(); ++i) {
-        cout <<  get<0>(ataqueFinal[i]) ;
-        if (i != ataqueFinal.size() - 1)
-            cout << ", ";
-    }
-    cout << ")" <<endl;
-
-
-    cout << "(";
-    for (size_t i = 0; i < defensaFinal.size(); ++i) {
-        cout << get<0>(defensaFinal[i]);
-        if (i != defensaFinal.size() - 1)
-            cout << ", ";
-    }
-    cout << ")" << endl;
-
-    return 0;
-
-}*/
 
 
 
