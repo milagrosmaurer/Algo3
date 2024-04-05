@@ -1,0 +1,28 @@
+//quiero encontrar subsecuencia con ancho mas grande de la fila i
+
+
+//esta es mi solucion con BT
+int prueba(int i,vector<int> const& anchos,vector<int> const& alturas){
+
+    if(i==alturas.size()) return 0;
+    if(alturas[i]<=alturas[i+1]){
+        //si el sigueinte es creciente hago el max entre agregar el actual o no
+        return max(prueba(i+1,anchos,alturas)+anchos[i], prueba(i+1,anchos,alturas));
+
+    }else{ //caso en que no es creciente
+        return prueba(i+1,anchos,alturas);
+    }
+}
+
+int pruebaSkyline(vector<int> const& anchos, vector<int> const& alturas){
+    vector<int> mem(alturas.size());
+    int mejor = 0;
+    for(int i = 0; i<alturas.size();i++){
+        mem[i] = prueba(i,anchos,alturas);
+        if(mem[i]>mejor){
+            mejor = mem[i];
+        }
+
+    }
+    return mejor;
+}
