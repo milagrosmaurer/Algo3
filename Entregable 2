@@ -1,28 +1,97 @@
-//quiero encontrar subsecuencia con ancho mas grande de la fila i
+#include <iostream>
+#include <vector>
+#include <sstream>
 
 
-//esta es mi solucion con BT
-int prueba(int i,vector<int> const& anchos,vector<int> const& alturas){
+using namespace std;
 
-    if(i==alturas.size()) return 0;
-    if(alturas[i]<=alturas[i+1]){
-        //si el sigueinte es creciente hago el max entre agregar el actual o no
-        return max(prueba(i+1,anchos,alturas)+anchos[i], prueba(i+1,anchos,alturas));
+// Idea: si estoy parada en posicion i fijarme en mi vector mem desde j = 0 hasta i-1, en caso de que alturas[j] > alturas[i]
+// el maximo entre agregar el ancho del edificio i a mem[j] o no agregarlo, osea mem[j]
+// si mem[i] es mejor que el que tengo guardado como mejor caso, mem[i] pasa a ser mejor caso (to do esto es en caso creciente, en decreciente es analogo)
 
-    }else{ //caso en que no es creciente
-        return prueba(i+1,anchos,alturas);
+int skylineCreciente(vector<int> anchos, vector<int> alturas,int edificios){
+    int mejorCaso = 0;
+    vector<int> mem(edificios,0); //inicializo mi estructura de memoizacion como un vector de largo cantidad de edificos con ceros
+
+    for(int i = 0;i<edificios;i++){
+        mem[i] = anchos[i]; // siempre existe la posibilidad de que se tenga que empezar de mas adelante, en este caso por eso hacemos mem[i] = anchos[i]
+         for(int j = 0; j<i;j++){
+            if(alturas[j]<alturas[i]){ //como estoy en i y me quiero fijar los de atras, veo el caso en el que atras es mas chico, y el de adelante osea i es mas alto
+                mem[i]=max(mem[j],mem[j]+anchos[i]); //maximo entre agregar ancho[i] o no agregarlo
+            }
+        }
+        if(mem[i]>mejorCaso){
+            mejorCaso = mem[i]; //actualizacion de mejor caso
+        }
     }
+    return mejorCaso;
 }
 
-int pruebaSkyline(vector<int> const& anchos, vector<int> const& alturas){
-    vector<int> mem(alturas.size());
-    int mejor = 0;
-    for(int i = 0; i<alturas.size();i++){
-        mem[i] = prueba(i,anchos,alturas);
-        if(mem[i]>mejor){
-            mejor = mem[i];
+int skylineDecreciente(vector<int> anchos, vector<int> alturas,int edificios){ //analogo a creciente pero cambiando condicion de if
+    int mejorCaso = 0;
+    vector<int> mem(edificios,0);
+    for(int i = 0;i<edificios;i++){
+        mem[i] = anchos[i];
+
+        for(int j = 0; j<i;j++){
+            if(alturas[j]>alturas[i]){
+                mem[i]=max(mem[i],mem[j]+anchos[i]);
+            }
+        }
+        if(mem[i]>mejorCaso){
+            mejorCaso =mem[i];
+        }
+    }
+    return mejorCaso;
+}
+
+
+int main(){
+    int casos;
+    cin >> casos;
+    cin.ignore();
+
+    for(int i = 0;i<casos;i++){
+        vector<int> anchos;
+        vector<int> alturas;
+        int edificios;
+        cin >> edificios;
+        cin.ignore();
+
+        string linea;
+        getline(cin,linea);
+        stringstream ss1(linea);
+        int temp;
+        while(ss1 >> temp){
+            alturas.push_back(temp);
+        }
+
+        getline(cin,linea);
+        stringstream ss2(linea);
+        while(ss2 >> temp){
+            anchos.push_back(temp);
+        }
+        int resultadoCreciente = skylineCreciente(anchos,alturas,edificios);
+        int resultadoDecreciente = skylineDecreciente(anchos,alturas,edificios);
+
+        if(resultadoCreciente >= resultadoDecreciente){
+            cout <<"Case " << i+1 << "."<< " Increasing " << "(" << resultadoCreciente << ")." << " Decreasing "<<"("<<resultadoDecreciente<<")."<<endl;
+        }else{
+            cout <<"Case " << i+1 << "."<<  " Decreasing " << "(" <<resultadoDecreciente<<")."<<" Increasing "<< "("<<resultadoCreciente<<")."<<endl;
         }
 
     }
-    return mejor;
+    return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
