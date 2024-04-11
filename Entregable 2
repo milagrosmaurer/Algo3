@@ -1,13 +1,52 @@
 #include <iostream>
 #include <vector>
 #include <sstream>
+#include <map>
 
 
 using namespace std;
 
 // Idea: si estoy parada en posicion i fijarme en mi vector mem desde j = 0 hasta i-1, en caso de que alturas[j] > alturas[i]
-// el maximo entre agregar el ancho del edificio i a mem[j] o no agregarlo, osea mem[j]
+// el maximo entre agregar el ancho del edificio i a mem[j] o no agregarlo, osea mem[i] , el mejor caso ahsta el momento
 // si mem[i] es mejor que el que tengo guardado como mejor caso, mem[i] pasa a ser mejor caso (to do esto es en caso creciente, en decreciente es analogo)
+
+struct skyline { //esto me sirvio mucho al momento de impresion sino me pasaba que me imprimia mientras se resolvia el ejercicio
+    skyline(int e, vector<int> an,vector<int> al): edificios(e),anchos(an),alturas(al){}
+    int edificios;
+    vector<int> anchos;
+    vector<int> alturas;
+};
+
+vector<skyline> solicitarDatos(int casos){ 
+
+    vector<skyline> datos;
+
+    for (int i = 0; i < casos; ++i) {
+        vector<int> anchos;
+        vector<int> alturas;
+        int edificios;
+        cin >> edificios;
+        cin.ignore();
+
+        string linea;
+        getline(cin,linea);
+        stringstream ss1(linea);
+        int temp;
+        while(ss1 >> temp){
+            alturas.push_back(temp);
+        }
+
+        getline(cin,linea);
+        stringstream ss2(linea);
+        while(ss2 >> temp){
+            anchos.push_back(temp);
+        }
+        datos.push_back(skyline(edificios,anchos,alturas));
+    }
+    return datos;
+}
+
+
 
 int skylineCreciente(vector<int> anchos, vector<int> alturas,int edificios){
     int mejorCaso = 0;
@@ -17,7 +56,7 @@ int skylineCreciente(vector<int> anchos, vector<int> alturas,int edificios){
         mem[i] = anchos[i]; // siempre existe la posibilidad de que se tenga que empezar de mas adelante, en este caso por eso hacemos mem[i] = anchos[i]
          for(int j = 0; j<i;j++){
             if(alturas[j]<alturas[i]){ //como estoy en i y me quiero fijar los de atras, veo el caso en el que atras es mas chico, y el de adelante osea i es mas alto
-                mem[i]=max(mem[j],mem[j]+anchos[i]); //maximo entre agregar ancho[i] o no agregarlo
+                mem[i]=max(mem[i],mem[j]+anchos[i]); //maximo entre agregar ancho[i] o no agregarlo
             }
         }
         if(mem[i]>mejorCaso){
@@ -51,38 +90,36 @@ int main(){
     cin >> casos;
     cin.ignore();
 
+    vector<skyline> datos = solicitarDatos(casos);
+
     for(int i = 0;i<casos;i++){
-        vector<int> anchos;
-        vector<int> alturas;
-        int edificios;
-        cin >> edificios;
-        cin.ignore();
+        skyline actual = datos[i];
 
-        string linea;
-        getline(cin,linea);
-        stringstream ss1(linea);
-        int temp;
-        while(ss1 >> temp){
-            alturas.push_back(temp);
-        }
-
-        getline(cin,linea);
-        stringstream ss2(linea);
-        while(ss2 >> temp){
-            anchos.push_back(temp);
-        }
-        int resultadoCreciente = skylineCreciente(anchos,alturas,edificios);
-        int resultadoDecreciente = skylineDecreciente(anchos,alturas,edificios);
-
-        if(resultadoCreciente >= resultadoDecreciente){
-            cout <<"Case " << i+1 << "."<< " Increasing " << "(" << resultadoCreciente << ")." << " Decreasing "<<"("<<resultadoDecreciente<<")."<<endl;
+        int resultadoCreciente = skylineCreciente(actual.anchos,actual.alturas,actual.edificios);
+        int resultadoDecreciente = skylineDecreciente(actual.anchos,actual.alturas,actual.edificios);
+        if(i<casos-1 ) {
+            if (resultadoCreciente >= resultadoDecreciente) {
+                cout << "Case " << i + 1 << "." << " Increasing " << "(" << resultadoCreciente << ")." << " Decreasing "
+                     << "(" << resultadoDecreciente << ")." << endl;
+            } else {
+                cout << "Case " << i + 1 << "." << " Decreasing " << "(" << resultadoDecreciente << ")."
+                     << " Increasing " << "(" << resultadoCreciente << ")." << endl;
+            }
         }else{
-            cout <<"Case " << i+1 << "."<<  " Decreasing " << "(" <<resultadoDecreciente<<")."<<" Increasing "<< "("<<resultadoCreciente<<")."<<endl;
+            if (resultadoCreciente >= resultadoDecreciente) {
+                cout << "Case " << i + 1 << "." << " Increasing " << "(" << resultadoCreciente << ")." << " Decreasing "
+                     << "(" << resultadoDecreciente << ")."<<endl;
+            } else {
+                cout << "Case " << i + 1 << "." << " Decreasing " << "(" << resultadoDecreciente << ")."
+                     << " Increasing " << "(" << resultadoCreciente << ")."<<endl;
+            }
         }
 
     }
+
     return 0;
 }
+
 
 
 
