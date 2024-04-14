@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <sstream>
-#include <map>
+
 
 
 using namespace std;
@@ -10,6 +10,8 @@ using namespace std;
 // el maximo entre agregar el ancho del edificio i a mem[j] o no agregarlo, osea mem[i] , el mejor caso ahsta el momento
 // si mem[i] es mejor que el que tengo guardado como mejor caso, mem[i] pasa a ser mejor caso (to do esto es en caso creciente, en decreciente es analogo)
 
+//Esta idea la saque del ejercicio de maximo largo de subsecuencia y la adapte a este ejercicio.
+
 struct skyline { //esto me sirvio mucho al momento de impresion sino me pasaba que me imprimia mientras se resolvia el ejercicio
     skyline(int e, vector<int> an,vector<int> al): edificios(e),anchos(an),alturas(al){}
     int edificios;
@@ -17,7 +19,7 @@ struct skyline { //esto me sirvio mucho al momento de impresion sino me pasaba q
     vector<int> alturas;
 };
 
-vector<skyline> solicitarDatos(int casos){ 
+vector<skyline> solicitarDatos(int casos){
 
     vector<skyline> datos;
 
@@ -30,14 +32,14 @@ vector<skyline> solicitarDatos(int casos){
 
         string linea;
         getline(cin,linea);
-        stringstream ss1(linea);
+        stringstream ss1(linea); //ss1 manipula cadena de caracteres
         int temp;
-        while(ss1 >> temp){
+        while(ss1 >> temp){ //se hace mientras sea posible extraer valores de la cadena de caraceteres
             alturas.push_back(temp);
         }
 
         getline(cin,linea);
-        stringstream ss2(linea);
+        stringstream ss2(linea); //ss2 tambien, a diferencia de que ambas son independiente
         while(ss2 >> temp){
             anchos.push_back(temp);
         }
@@ -108,10 +110,10 @@ int main(){
         }else{
             if (resultadoCreciente >= resultadoDecreciente) {
                 cout << "Case " << i + 1 << "." << " Increasing " << "(" << resultadoCreciente << ")." << " Decreasing "
-                     << "(" << resultadoDecreciente << ")."<<endl;
+                     << "(" << resultadoDecreciente << ")." << endl;
             } else {
                 cout << "Case " << i + 1 << "." << " Decreasing " << "(" << resultadoDecreciente << ")."
-                     << " Increasing " << "(" << resultadoCreciente << ")."<<endl;
+                     << " Increasing " << "(" << resultadoCreciente << ")." << endl;
             }
         }
 
@@ -119,7 +121,6 @@ int main(){
 
     return 0;
 }
-
 
 
 
