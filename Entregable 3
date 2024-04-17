@@ -135,6 +135,37 @@ int maximasBellotas(vector<vector<int>> arboles, int tiempoEnAvanzar) {
     return mejorCaso;
 
 }
+ // version sin un for, osea optimizada (esperemos)
+int maxCantidadDeBellotas(vector<vector<int>> arboles, int tiempoEnAvanzar){
+    int fila = arboles.size();
+    int columna = arboles[0].size();
+    int mejorCaso = 0;
+    vector<int> mejorCasoDeCadaColumna(fila,0);
+
+    for(int i = fila - 1; i >= 0 ; i--){
+
+        for(int j = columna - 1; j>=0 ; j--){
+            int cantBellotaActual = arboles[i][j];
+
+            if( i + 1 <= fila - 1 ){
+                if(i + tiempoEnAvanzar <=  fila - 1){
+                    arboles[i][j] = max(cantBellotaActual + arboles[i+1][j],cantBellotaActual + mejorCasoDeCadaColumna[i + tiempoEnAvanzar] );
+                    // puede ir para abajo en el mismo arbol o bajar tiempoEnAvanzar, pero me interesa solo la mejor opcion
+                }else{
+                    arboles[i][j] = cantBellotaActual + arboles[i+1][j];
+                    // solo puede ir para abajo en el mismo arbol
+                }
+            }else{
+                arboles[i][j] = cantBellotaActual;
+                //no puede ir para abajo
+            }
+            if(arboles[i][j] > mejorCasoDeCadaColumna[i]) mejorCasoDeCadaColumna[i] = arboles[i][j];
+            if(arboles[i][j] > mejorCaso) mejorCaso = arboles[i][j];
+        }
+
+    }
+    return mejorCaso;
+}
 
 int main() {
     //vector<vector<int>> arbol = {{1,0,0},{0,2,1},{0,1,0},{0,1,0},{0,0,1},{0,1,1},{1,0,1},{0,1,1},{0,0,0},{1,0,0}};
