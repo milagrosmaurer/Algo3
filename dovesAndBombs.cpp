@@ -5,6 +5,8 @@
 
 using namespace std;
 
+// https://vjudge.net/problem/UVA-10765
+
 // La idea de este ejercicio es buscar puntos de articulaciones
 // Un vertice v de un grafo G es un punto de articulacion si G-v tiene mas componentes conexas que G
 
