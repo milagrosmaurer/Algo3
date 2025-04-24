@@ -4,6 +4,8 @@
 
 using namespace std;
 
+// https://vjudge.net/problem/CodeForces-559B
+
 //entregable 4 divide and conquer
 //importante: los dos strings tienen la misma longitud
 
