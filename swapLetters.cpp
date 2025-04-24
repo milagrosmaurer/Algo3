@@ -3,6 +3,8 @@
 #include <vector>
 #include <tuple>
 
+// https://vjudge.net/problem/CodeForces-1215C
+
 using namespace std;
 
 pair<int,int> cantidadErrores(string uno, string dos){ //cuenta la cantidad de "bloques" que hay que cambiar
