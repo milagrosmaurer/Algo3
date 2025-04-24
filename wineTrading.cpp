@@ -7,6 +7,8 @@ using namespace std;
 
 //Entregable 5: Algortimos Greedy
 
+// https://vjudge.net/problem/SPOJ-GERGOVIA
+
 vector<pair<long,vector<long>>> solicitarDatos (){ //funcion que solicita mis datos y guarda cada vecindario en un vector
     vector<pair<long,vector<long>>> datos;
     long casas;
