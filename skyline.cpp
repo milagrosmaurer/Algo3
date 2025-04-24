@@ -6,6 +6,8 @@
 
 using namespace std;
 
+// https://vjudge.net/problem/UVA-11790
+
 // Idea: si estoy parada en posicion i fijarme en mi vector mem desde j = 0 hasta i-1, en caso de que alturas[j] > alturas[i]
 // el maximo entre agregar el ancho del edificio i a mem[j] o no agregarlo, osea mem[i] , el mejor caso ahsta el momento
 // si mem[i] es mejor que el que tengo guardado como mejor caso, mem[i] pasa a ser mejor caso (to do esto es en caso creciente, en decreciente es analogo)
