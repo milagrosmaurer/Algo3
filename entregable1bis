@@ -1,4 +1,0 @@
-tuple<vector<tuple<string,int,int>>,vector<tuple<string,int,int>>> formacion(const vector<tuple<string,int,int>>& jugadores,vector<tuple<string,int,int>>& mejorAtaque,vector<tuple<string,int,int>> ataque, vector<tuple<string,int,int>>& defensa,int i){
-
-
-
