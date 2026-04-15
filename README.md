@@ -1,4 +1,4 @@
-Problemas de porgramación competitiva correspondientes a la materia Algoritmos y Estructuras de Datos 3 de la Facultad de Ciencias Exactas y Naturales. Algunas de las técnicas aplicadas son:
+Problemas de programación competitiva correspondientes a la materia Algoritmos y Estructuras de Datos 3 de la Facultad de Ciencias Exactas y Naturales (UBA). Algunas de las técnicas aplicadas son:
 - Programación dinámica.
 - Algoritmos Greedy.
 - DFS y BFS.
